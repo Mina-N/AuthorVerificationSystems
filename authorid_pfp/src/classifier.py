@@ -45,7 +45,7 @@ class classifier:
         gt = self.db.get_ground_truth(self.language)
 
         for author in authors:
-            if (self.predict(author) >= 0.5) == (gt[author] >= 0.5):
+            if (self.predict(author) >= 0.99) == (gt[author] >= 0.99): #CHANGED
                 ret += 1.0
 
         return ret / float(len(authors))
@@ -69,9 +69,9 @@ class classifier:
         gt = self.db.get_ground_truth(self.language)
 
         for author in authors:
-            if self.predict(author) == 0.5:
+            if self.predict(author) == 0.99: #CHANGED
                 nu += 1
-            elif (self.predict(author) >= 0.5) == (gt[author] >= 0.5):
+            elif (self.predict(author) >= 0.99) == (gt[author] >= 0.99): #CHANGED
                 nc += 1.0
 
         return (nc + (nu * nc / n)) / n
@@ -90,12 +90,12 @@ class classifier:
             probabilities.append(prediction)
             targets.append(gt[author])
 
-            if (prediction >= 0.5) == (gt[author] >= 0.5):
+            if (prediction >= 0.99) == (gt[author] >= 0.99): #CHANGED
                 acc_ret += 1.0
 
-            if prediction == 0.5:
+            if prediction == 0.99: #CHANGED
                 nu += 1
-            elif (prediction >= 0.5) == (gt[author] >= 0.5):
+            elif (prediction >= 0.99) == (gt[author] >= 0.99): #CHANGED
                 nc += 1.0
 
         return acc_ret / float(len(authors)), \
@@ -663,7 +663,7 @@ class adjustment_classifier(classifier):
         expanded_prob = self.expand_prob(prob, self.prob_degree)
         expanded_prob_new = np.reshape(expanded_prob, (1, -1)) #contains a single sample
         adjusted_prob = self.lr_probs.predict(expanded_prob_new)[0]
-        if (adjusted_prob >= 0.5) == (prob >= 0.5):
+        if (adjusted_prob >= 0.99) == (prob >= 0.99): #CHANGED
             return max(0.0, min(1.0, adjusted_prob))
         else:
             return prob
@@ -675,8 +675,8 @@ class reject_classifier(classifier):
         self.db = None
         self.language = language
 
-        self.left_threshold = 0.5
-        self.right_threshold = 0.5
+        self.left_threshold = 0.99 #CHANGED
+        self.right_threshold = 0.99 #CHANGED
 
         self.classifier = classifier
         self.rate = 0.8
@@ -690,7 +690,7 @@ class reject_classifier(classifier):
             if x < self.left_threshold:
                 return x
             elif x < self.right_threshold:
-                return 0.5
+                return 0.99 #CHANGED
             else:
                 return x
 
@@ -700,9 +700,9 @@ class reject_classifier(classifier):
             nu = 0
 
             for p, t in pt:
-                if map_value(p) == 0.5:
+                if map_value(p) == 0.99: #CHANGED
                     nu += 1
-                elif (map_value(p) >= 0.5) == (t >= 0.5):
+                elif (map_value(p) >= 0.99) == (t >= 0.99): #CHANGED
                     nc += 1.0
 
             return (nc + (nu * nc / n)) / n
@@ -731,8 +731,8 @@ class reject_classifier(classifier):
         probs = list(set(probs))
         probs.sort()
 
-        best_left = 0.5
-        best_right = 0.5
+        best_left = 0.99 #CHANGED
+        best_right = 0.99 #CHANGED
         best_c_at_1 = 0.0
 
         for i in range(len(ts)):
@@ -743,8 +743,8 @@ class reject_classifier(classifier):
                 self.left_threshold = probs[i][0]
                 self.right_threshold = probs[j][0]
 
-                if self.left_threshold > 0.5 or \
-                        self.right_threshold < 0.5:
+                if self.left_threshold > 0.99 or \ #CHANGED
+                        self.right_threshold < 0.99: #CHANGED
                     break
 
                 next_c_at_1 = c_at_one_aux(probs)
@@ -767,7 +767,7 @@ class reject_classifier(classifier):
         if prob < self.left_threshold:
             return prob
         elif prob <= self.right_threshold:
-            return 0.5
+            return 0.99 #CHANGED
         else:
             return prob
 
