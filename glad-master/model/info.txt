@@ -1,0 +1,1 @@
+glad-main.py --training casis25_training_english -i CASIS_25-verification-test-english-2018-10-16 --save_model model

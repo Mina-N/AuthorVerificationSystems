@@ -1,0 +1,20 @@
+#4b50a15-18 0.672 27 +0.019
+-l2e-1 -L-5 --leakage-decay=0.9 --concat-texts --init-method=0 -H99 -e18 --presynaptic-noise=0.0
+
+#0.708 4b50a15-27
+-l2e-1 -L-5 --leakage-decay=0.9 --concat-texts -H7 -e27 --presynaptic-noise=0.0 --init-method=0 -d4
+
+#3488aa5-21 0.667 28 +0.017
+-l2e-1 -L-5 --leakage-decay=0.9 -d10 --concat-texts --init-method=0 -H7 -e21 --presynaptic-noise=0.0
+
+#df38d1e-38 0.663 18 +0.010
+-l2e-1 -L-5 --leakage-decay=0.7 --balanced-training --reverse -H119 -e38 --presynaptic-noise=0.2
+
+#30f8e84-17 0.629 15 +0.005
+-l1.4e-1 -L-2 --leakage-decay=0.75 --swap-corpora -H99 -e17 --presynaptic-noise=0.2 --balanced-training
+
+#0.695 92fec66-6
+-l1.4e-1 -L-2 --leakage-decay=0.75 --swap-corpora --reverse -H99 -e6 --presynaptic-noise=0.2 --balanced-training
+
+#0.684 56c6e3a-23
+-l2e-1 -L-3 --leakage-decay=0.7 -H119 -e23 --presynaptic-noise=0.3

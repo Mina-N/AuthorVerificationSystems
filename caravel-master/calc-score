@@ -1,0 +1,128 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+import argparse
+import sys
+import re
+from language import read_truth_file, read_answers_file
+
+from scoring import calc_auc, calc_cat1, search_answer_files,\
+    search_commits, search_one, regex_filter, \
+    simple_file_gen, versioned_file_gen, always, never, \
+    set_use_colour
+
+from scoring import generate_ensembles, print_ensembles, print_ensemble_usefulness
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-a', '--answer-file', help="read scores from here")
+    parser.add_argument('-t', '--truth-file', help="find ground truth here")
+    parser.add_argument('-p', '--answer-file-pattern',
+                        help="read scores from files matching this pattern")
+    parser.add_argument('-s', '--search', action="store_true",
+                        help="search for good c@1 settings.")
+    parser.add_argument('--search-commits-only', action="store_true",
+                        help="print good commit IDs")
+    parser.add_argument('-v', '--verbose', action="store_true",
+                        help="print more")
+    parser.add_argument('-e', '--epoch-from-filename', action="store_true",
+                        help=("if the basename has a number, "
+                              "disambiguate commits with it"))
+    parser.add_argument('-E', '--test-ensembles', type=int,
+                        help="test ensembles of this size")
+    parser.add_argument('-Z', '--ensemble-sample-size', type=int, default=14,
+                        help="sample ensembles from this many candidates")
+    parser.add_argument('-u', '--ensemble-usefulness', action='store_true',
+                        help="print ensemble member usefulness, not ensemble")
+    parser.add_argument('-i', '--ensemble-iterations', type=int, default=1,
+                        help="run this many times to determine usefulness")
+    parser.add_argument('--include-revisions',
+                        help="include these revisions in ensemble "
+                        "(space seperated regexes)")
+    parser.add_argument('--exclude-revisions',
+                        help="exclude these revisions from ensemble "
+                        "(space seperated regexes)")
+    parser.add_argument('--randomise', action="store_true",
+                        help="use random sample in ensembles")
+    parser.add_argument('--cat1-centre', type=float, default=None,
+                        help="use this as c@1 centre")
+    parser.add_argument('--cat1-radius', type=float, default=0,
+                        help="use this as c@1 centre")
+    parser.add_argument('--corpus-version', type=int, default=-1,
+                        help="restrict corpus to version 3 or 4 (default auto)")
+    parser.add_argument('-n', '--number-of-results', type=int, default=10,
+                        help="show only this many results (e.g. with -u -i)")
+    parser.add_argument('-C', '--colour', default='auto', metavar='yes|no|auto',
+                        help="use colour: yes, no, auto (default)")
+    parser.add_argument('-S', '--sort-by-commit', action='store_true',
+                        help=("sort by commit id, not score"))
+
+    args = parser.parse_args()
+
+    set_use_colour(args.colour)
+
+    truth = read_truth_file(args.truth_file)
+
+    if args.answer_file_pattern:
+        if args.corpus_version == -1 and args.truth_file:
+            m = re.search(r'2015-0(\d)-', args.truth_file)
+            if m:
+                args.corpus_version = int(m.group(1))
+            else:
+                args.corpus_version = 0
+        if args.corpus_version:
+            filename_gen = versioned_file_gen(args.answer_file_pattern,
+                                              args.corpus_version)
+        else:
+            filename_gen = simple_file_gen(args.answer_file_pattern)
+
+        if args.search_commits_only:
+            search_commits(filename_gen, truth=truth,
+                           epoch_from_filename=args.epoch_from_filename,
+                           cat1_centre=args.cat1_centre,
+                           cat1_radius=args.cat1_radius)
+        elif args.test_ensembles:
+            include, exclude = always, never
+            if args.include_revisions:
+                include = set(args.include_revisions.split()).__contains__
+            if args.exclude_revisions:
+                exclude = set(args.exclude_revisions.split()).__contains__
+
+            ensemble_data = generate_ensembles(filename_gen,
+                                               args.test_ensembles,
+                                               sample_size=args.ensemble_sample_size,
+                                               truth=truth,
+                                               randomise=args.randomise,
+                                               epoch_from_filename=args.epoch_from_filename,
+                                               cat1_centre=args.cat1_centre,
+                                               cat1_radius=args.cat1_radius,
+                                               include=include,
+                                               exclude=exclude,
+                                               iterations=args.ensemble_iterations)
+            if args.ensemble_usefulness:
+                lang = re.search(r'dataset-(\w+)-20', args.truth_file).group(1)
+                print_ensemble_usefulness(ensemble_data, lang, args.number_of_results,
+                                          sort_by_commit=args.sort_by_commit)
+            else:
+                print_ensembles(*ensemble_data[0], n_results=args.number_of_results,
+                                sort_by_commit=args.sort_by_commit)
+        else:
+            if args.cat1_centre:
+                print "--cat1-centre doesn't apply in this mode"
+            search_answer_files(filename_gen, truth=truth,
+                                epoch_from_filename=args.epoch_from_filename)
+        sys.exit()
+
+    answers = read_answers_file(args.answer_file)
+
+    auc = calc_auc(answers, truth)
+    cat1 = calc_cat1(answers, truth)
+
+    score = auc * cat1
+    if args.verbose:
+        print "AUC %.3f c@1 %.3f product %.3f" % (auc, cat1, score)
+
+    if args.search:
+        search_one(answers, truth)
+
+
+main()

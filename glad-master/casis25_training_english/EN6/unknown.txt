@@ -1,0 +1,11 @@
+MicroMappers apps – called Clickers – are designed to help volunteers do things like:
+
+• Tag tweets with situation-specific terms, such as "caution" or "offers of help."
+
+• Tag pictures to categorise the amount or type of damage.
+
+• Geo-tagging tweets and images that are not already automatically geo-tagged with location information.
+
+Each tagging activity is split into a microtask and is completed via a Clicker app. That's not hugely different from how Meier's taskforce used CrowdCrafting tools to analyse social media data during typhoon Pablo. MicroMappers' innovative twist is that these tasks can be performed by anyone, anytime and anywhere.
+
+MicroMappers doesn't rely on (or potentially exhaust) a small volunteer taskforce. Instead, it asks that many people spend a little bit of time performing a small task. Anyone can become a MicroMapper – there are no special skills or exceptional time commitments required. The success of citizen science projects such as Zooniverse suggests that microtasking is a workable way to harness a massive group of volunteers to analyse massive amounts of information.

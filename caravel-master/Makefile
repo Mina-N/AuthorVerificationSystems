@@ -1,0 +1,40 @@
+recur:
+	git clone https://github.com/douglasbagnall/recur.git
+
+recur/local.mak: recur
+	cp $@.example.x86_64 $@
+
+recur/charmodel.so: recur/local.mak
+	cd recur && git pull
+	cd recur && make charmodel.so
+
+charmodel.so: recur/charmodel.so
+	ln -s $^ $@
+
+pgm-clean:
+	rm -rf images
+	mkdir images
+
+pyc-clean:
+	rm -f *.pyc mappings/*.pyc
+
+.PHONY: all pgm-clean all-mappings answers-rev
+
+.SECONDARY: recur recur/local.mak
+
+mappings/nl.py:
+	./corpus-utils -m $(corpus/pan15-authorship-verification-training-dataset-dutch-2015-04-19) -d --decompose-caps > $@
+
+mappings/en.py:
+	./corpus-utils -m $(corpus/pan15-authorship-verification-training-dataset-english-2015-04-19) -d --decompose-caps > $@
+
+mappings/es.py:
+	./corpus-utils -m $(corpus/pan15-authorship-verification-training-dataset-spanish-2015-04-19) -d --decompose-caps > $@
+
+mappings/gr.py:
+	./corpus-utils -m $(corpus/pan15-authorship-verification-training-dataset-greek-2015-04-19) -d --decompose-caps --collapse-latin > $@
+
+all-mappings: mappings/gr.py mappings/en.py  mappings/es.py mappings/nl.py
+
+answers-rev:
+	make-answers.sh

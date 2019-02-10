@@ -1,0 +1,19 @@
+{ "corpus": "Modified CASIS-25 Dataset",
+  "problems": [
+    {"name": "EE1", "answer": "Y", "language": "english"},
+    {"name": "EE2", "answer": "N", "language": "english"},
+    {"name": "EE3", "answer": "N", "language": "english"},
+    {"name": "EE4", "answer": "Y", "language": "english"},
+    {"name": "EE5", "answer": "Y", "language": "english"},
+    {"name": "EE6", "answer": "Y", "language": "english"},
+    {"name": "EE7", "answer": "N", "language": "english"},
+    {"name": "EE8", "answer": "N", "language": "english"},
+    {"name": "EE9", "answer": "N", "language": "english"},
+    {"name": "EE10", "answer": "Y", "language": "english"},
+    {"name": "EE11", "answer": "N", "language": "english"},
+    {"name": "EE12", "answer": "Y", "language": "english"},
+    {"name": "EE13", "answer": "Y", "language": "english"},
+    {"name": "EE14", "answer": "N", "language": "english"},
+    {"name": "EE15", "answer": "N", "language": "english"}
+  ]
+}

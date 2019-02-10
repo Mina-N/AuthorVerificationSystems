@@ -1,0 +1,74 @@
+#!/usr/bin/python
+import argparse
+import os
+import sys
+import subprocess
+from language import guess_directory_lang
+
+HERE = os.path.dirname(__file__)
+
+# XXX don't add extra lines - config needs to fit in 20 lines.
+CONFIG = {
+    'EN': ['-H139', '-e40', '-M', 'en',
+           '--presynaptic-noise=0.2',
+           '--control-corpus', 'corpus/control/EN'],
+    'GR': ['-H139', '-e40', '-M', 'gr',
+           '--presynaptic-noise=0.2',
+           #'--reverse',
+           '--control-corpus', 'corpus/control/GR'],
+    'SP': ['-H139', '-e40', '-M', 'es',
+           '--presynaptic-noise=0.2',
+           #'--reverse',
+           '--control-corpus', 'corpus/control/SP'],
+    'DU': ['-H139', '-e30', '-M', 'nl',
+           '--presynaptic-noise=0.2', '--concat-texts',
+           '--control-corpus', 'corpus/control/DU',
+           #"--temporal-pgm-dump",
+           #"--periodic-pgm-dump", 'ihw how',
+           #"--periodic-pgm-period", '5000',
+       ],
+}
+
+CMD = ['./train-net', '-n', 'pan', '--batch-size=40',
+       '-l2e-1', '-L-5', '--leakage-decay=0.7',
+       #'--balanced-training',
+       #'--swap-corpora',
+       '--activation=2', '--pan-hedge=0.0',
+       '--learning-method=4', '-d70', '--ignore-start=10',
+       '--try-swapping-texts',
+       '-r8',
+       '--reverse',
+       '--concat-texts',
+       '--init-method=3'
+       ]
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i', '--input-dir', help="find testing corpus here")
+    parser.add_argument('-o', '--output-dir', help="write results here")
+    parser.add_argument('--raw-answers', action="store_true",
+                        help="also write results not adjusted for c@1")
+    parser.add_argument('--raw-answers-trace', action="store_true",
+                        help="write raw results after every epoch")
+
+    args = parser.parse_args()
+
+    key = guess_directory_lang(args.input_dir)
+
+    output_filename = os.path.join(args.output_dir, "answers.txt")
+
+    cmd = (CMD + CONFIG[key] + [args.input_dir] +
+           ['--pan-answers', output_filename])
+
+    if args.raw_answers:
+        raw_output_filename = os.path.join(args.output_dir, "raw-answers.txt")
+        cmd.extend(['--raw-answers', raw_output_filename])
+    if args.raw_answers_trace:
+        trace_pattern = os.path.join(args.output_dir, "raw-answers-%d.txt")
+        cmd.extend(['--raw-answers-trace', trace_pattern])
+
+    print >> sys.stderr, "running %s" % (' '.join(cmd))
+    subprocess.call(cmd)
+
+main()

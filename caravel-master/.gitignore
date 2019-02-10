@@ -1,0 +1,12 @@
+/junk/
+*~
+*.pyc
+*.[oadi]
+*.so
+.emacs*
+/corpus/
+/images/
+/*.log
+*.net
+/answers-*
+/results/

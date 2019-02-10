@@ -1,0 +1,26 @@
+#c3a5a6e-24
+-l1.4e-1 -L-2 --leakage-decay=0.7 -H139 -e24 --presynaptic-noise=0.1 --init-method=0
+
+#92d8d39-19
+-l1.4e-1 -L-4 --leakage-decay=0.707 --reverse -H79 -e19 --presynaptic-noise=0.0
+
+#908c98f-19
+-l2e-1 -L-3 --leakage-decay=0.7 --concat-texts -H139 -e19 --presynaptic-noise=0.3
+
+#edda36f-24
+-l1.4e-1 -L-2 --leakage-decay=0.7 -H119 -e24 --presynaptic-noise=0.1
+
+#df38d1e-32
+-l2e-1 -L-5 --leakage-decay=0.7 --balanced-training --reverse -H119 -e32 --presynaptic-noise=0.2
+
+#0.840 baaf5ab-26
+-l2e-1 -L-5 --leakage-decay=0.9 -d10 --init-method=2 -H79 -e26 --presynaptic-noise=0.0
+
+#a2a379c-13
+-l2e-1 -L-2 --leakage-decay=0.8 --concat-texts -H139 -e13 --presynaptic-noise=0.5
+
+#06cd228-34
+-l2e-1 -L-1 --leakage-decay=0.8 --concat-texts --reverse -H119 -e34 --presynaptic-noise=0.3
+
+#c3a5a6e-12
+-l1.4e-1 -L-2 --leakage-decay=0.7 -H139 -e12 --presynaptic-noise=0.1
