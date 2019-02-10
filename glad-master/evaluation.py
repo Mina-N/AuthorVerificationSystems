@@ -20,11 +20,11 @@ def calculateAnswers(truth_dict, answers_dict, misclass_file=None):
         truth = truth_dict[problem]
         answer = answers_dict[problem]
 
-        if truth == "Y" and float(answer) > 0.5:
+        if truth == "Y" and float(answer) > 0.91: #CHANGED
             correct += 1
-        elif truth == "N" and float(answer) < 0.5:
+        elif truth == "N" and float(answer) < 0.91: #CHANGED
             correct += 1
-        elif float(answer) == 0.5:
+        elif float(answer) == 0.91: #CHANGED
             unanswered += 1
         else:
             incorrect += 1
@@ -52,7 +52,7 @@ def calculateScore(correct, unanswered, numberOfProblems, truth_dict, answers_di
             l_true.append(0)
 
         l_answers.append(float(answer))
-    
+
     aucScore = sklearn.metrics.roc_auc_score(l_true, l_answers)
 
     return round(score, 3), round(aucScore, 3)
