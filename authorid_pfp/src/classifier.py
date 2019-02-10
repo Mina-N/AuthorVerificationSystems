@@ -742,8 +742,8 @@ class reject_classifier(classifier):
                 #print "probs[j]", probs[j]
                 self.left_threshold = probs[i][0]
                 self.right_threshold = probs[j][0]
-
-                if self.left_threshold > 0.99 or \ #CHANGED
+                #CHANGED
+                if self.left_threshold > 0.99 or \
                         self.right_threshold < 0.99: #CHANGED
                     break
 
